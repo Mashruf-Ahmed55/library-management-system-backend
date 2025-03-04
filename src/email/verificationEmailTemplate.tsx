@@ -7,9 +7,10 @@ import {
   Tailwind,
   Text,
 } from '@react-email/components';
+
 interface VerificationEmailProps {
   name: string;
-  verificationCode: number;
+  verificationCode: string;
 }
 
 export default function VerificationEmail({
@@ -17,7 +18,7 @@ export default function VerificationEmail({
   verificationCode,
 }: VerificationEmailProps) {
   return (
-    <Html>
+    <Html lang="en">
       <Head />
       <Tailwind>
         <Body className="bg-gray-100 text-gray-900">
@@ -25,7 +26,7 @@ export default function VerificationEmail({
             <Heading className="text-xl font-bold text-center text-blue-600">
               Verify Your Email Address
             </Heading>
-            <Text className="text-lg text-gray-700">
+            <Text className="text-lg text-gray-700 mt-4">
               Hi {name},<br /> Thank you for signing up! Please verify your
               email using the code below:
             </Text>

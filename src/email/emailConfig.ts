@@ -1,34 +1,51 @@
-import { Response } from 'express';
+import nodemailer from 'nodemailer';
+import { config } from '../config/config';
 import { verificationEmail } from './emailTemplates';
 
 const generateVerificationOtpEmailTemplate = (code: number, name: string) => {
   return verificationEmail(code, name);
 };
 
-export const sendVerificationCode = (
+const sendEmail = async (email: string, subject: string, message: string) => {
+  try {
+    const transporter = nodemailer.createTransport({
+      host: config.NODEMAILER_HOST as string,
+      port: Number(config.NODEMAILER_PORT),
+      secure: false,
+      auth: {
+        user: config.NODEMAILER_USER as string,
+        pass: config.NODEMAILER_PASS as string,
+      },
+    });
+
+    await transporter.sendMail({
+      from: config.NODEMAILER_USER,
+      to: email,
+      subject: subject,
+      html: message,
+    });
+
+    console.log('✅ Email sent successfully!');
+  } catch (error: any) {
+    console.error('❌ Error sending email:', error);
+    console.error('Error details:', error.response || error.message);
+    throw new Error('Email sending failed');
+  }
+};
+
+export const sendVerificationCode = async (
   verificationCode: number,
   email: string,
-  name: string,
-  res: Response
+  name: string
 ) => {
   try {
-    const message = generateVerificationOtpEmailTemplate(
+    const message = await generateVerificationOtpEmailTemplate(
       verificationCode,
       name
     );
-    // sendEmai({
-    //   email,
-    //   subject: 'Verification code sent successfully',
-    //   message,
-    // });
-    res.status(200).json({
-      success: true,
-      message: 'Verification code sent successfully',
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Verification code send faid',
-    });
+    await sendEmail(email, 'Verification Code', message);
+    console.log('✅ Verification code sent successfully!');
+  } catch (error: any) {
+    console.error('❌ Error in sending verification code:', error);
   }
 };

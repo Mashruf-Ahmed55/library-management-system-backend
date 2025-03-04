@@ -1,9 +1,8 @@
-import bcryptjs from 'bcryptjs'; // Fixed typo
+import bcryptjs from 'bcryptjs';
 import { NextFunction, Request, Response } from 'express';
 import expressAsyncHandler from 'express-async-handler';
 import createHttpError from 'http-errors';
-
-import { sendVerificationCode } from '../config/utils';
+import { sendVerificationCode } from '../email/emailConfig';
 import userModel from './user.model';
 
 export const register = expressAsyncHandler(
@@ -44,13 +43,17 @@ export const register = expressAsyncHandler(
         return next(createHttpError(500, 'Password hashing failed'));
       }
 
-      const newUser = await userModel.create({
+      const newUser = new userModel({
         name,
         email,
         password: hashedPassword,
       });
       const verificationCode = await newUser.generateVerificationCodes();
-      sendVerificationCode(verificationCode, email, name, res);
+      await newUser.save();
+      await sendVerificationCode(verificationCode, email, name);
+      res.status(201).json({
+        message: 'User registered successfully. Please verify your email.',
+      });
     } catch (error) {
       next(error);
     }

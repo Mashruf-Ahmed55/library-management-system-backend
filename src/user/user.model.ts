@@ -54,8 +54,14 @@ const userSchema = new Schema<IUser>(
       public_id: String,
       url: String,
     },
-    verificationCode: Number,
-    verificationCodeExpire: Date,
+    verificationCode: {
+      type: String, // 🔥 Changed to String to prevent leading zero issues
+      default: null,
+    },
+    verificationCodeExpire: {
+      type: Date,
+      default: null,
+    },
     resetPasswordToken: String,
     resetPasswordTokenExpire: Date,
   },
@@ -64,10 +70,12 @@ const userSchema = new Schema<IUser>(
   }
 );
 
-userSchema.methods.generateVerificationCodes = function () {
-  const verificationCode = generateVerificationCode();
+// ✅ Updated method to be async and save changes to DB
+userSchema.methods.generateVerificationCodes = async function () {
+  const verificationCode = generateVerificationCode().toString(); // Convert to String
   this.verificationCode = verificationCode;
-  this.verificationCodeExpire = Date.now() + 15 * 60 * 1000;
+  this.verificationCodeExpire = new Date(Date.now() + 15 * 60 * 1000);
+  await this.save(); // 🔥 Save changes to DB
   return verificationCode;
 };
 

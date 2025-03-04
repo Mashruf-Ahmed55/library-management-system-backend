@@ -4,6 +4,7 @@ import express from 'express';
 import morgan from 'morgan';
 import { config } from './config/config';
 import globalError from './middlewares/globalError';
+import userRouter from './user/user.route';
 
 const app = express();
 // Middwares configuration
@@ -19,6 +20,7 @@ app.use(cookieParser());
 app.use(morgan('dev'));
 
 // Route Configuration
+app.use('/api/v1/auth', userRouter);
 
 // Global Error Handler
 app.use(globalError);

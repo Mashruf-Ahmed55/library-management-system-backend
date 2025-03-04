@@ -4,8 +4,9 @@ import VerificationEmail from './verificationEmailTemplate'; // Ensure you have 
 
 export const verificationEmail = async (code: number, name: string) => {
   const emailContent = React.createElement(VerificationEmail, {
-    verificationCode: code,
+    verificationCode: code.toString(), // Number থেকে String করা হয়েছে
     name: name,
   });
-  return await render(emailContent);
+
+  return render(emailContent); // render() অ্যাসিনক্রোনাস নয়, তাই await দরকার নেই
 };
