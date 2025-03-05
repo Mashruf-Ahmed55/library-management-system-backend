@@ -21,19 +21,51 @@ export default function VerificationEmail({
     <Html lang="en">
       <Head />
       <Tailwind>
-        <Body className="bg-gray-100 text-gray-900">
-          <Container className="max-w-lg mx-auto p-6 bg-white rounded-lg shadow-lg">
-            <Heading className="text-xl font-bold text-center text-blue-600">
+        <Body style={{ backgroundColor: '#f3f4f6', color: '#111827' }}>
+          <Container
+            style={{
+              maxWidth: '600px',
+              margin: '20px auto',
+              padding: '24px',
+              backgroundColor: '#ffffff',
+              borderRadius: '8px',
+              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+            }}
+          >
+            <Heading
+              style={{
+                fontSize: '20px',
+                fontWeight: 'bold',
+                textAlign: 'center',
+                color: '#2563eb',
+              }}
+            >
               Verify Your Email Address
             </Heading>
-            <Text className="text-lg text-gray-700 mt-4">
+            <Text
+              style={{
+                fontSize: '16px',
+                color: '#374151',
+                marginTop: '16px',
+              }}
+            >
               Hi {name},<br /> Thank you for signing up! Please verify your
               email using the code below:
             </Text>
-            <Text className="text-2xl font-bold text-center text-red-500 tracking-widest">
+            <Text
+              style={{
+                fontSize: '24px',
+                fontWeight: 'bold',
+                textAlign: 'center',
+                color: '#ef4444',
+                letterSpacing: '2px',
+              }}
+            >
               {verificationCode}
             </Text>
-            <Text className="text-sm text-gray-600 mt-4">
+            <Text
+              style={{ fontSize: '14px', color: '#6b7280', marginTop: '16px' }}
+            >
               If you didn't request this, please ignore this email.
             </Text>
           </Container>
