@@ -1,4 +1,5 @@
 import otpGenerator from 'otp-generator';
+
 export const generateVerificationCode = () => {
   let otp = otpGenerator.generate(6, {
     upperCaseAlphabets: false,

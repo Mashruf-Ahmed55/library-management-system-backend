@@ -1,6 +1,6 @@
-import { model, Schema } from 'mongoose';
-import { generateVerificationCode } from '../config/utils';
-import { IUser } from './user.type';
+import {model, Schema} from 'mongoose';
+import {generateVerificationCode} from '../config/utils';
+import {IUser} from './user.type';
 
 const userSchema = new Schema<IUser>(
   {
@@ -55,7 +55,7 @@ const userSchema = new Schema<IUser>(
       url: String,
     },
     verificationCode: {
-      type: String, // 🔥 Changed to String to prevent leading zero issues
+      type: String,
       default: null,
     },
     verificationCodeExpire: {

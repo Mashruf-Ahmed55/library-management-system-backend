@@ -16,10 +16,13 @@ export interface IUser {
   role: string;
   accountVerified: boolean;
   borrowBooks: IBorrowedBook[];
-  avatar: avatar;
-  verificationCode: Number;
-  verificationCodeExpire: Date;
-  resetPasswordToken: String;
+  avatar: {
+    public_id: string;
+    url: string;
+  };
+  verificationCode: number | null;
+  verificationCodeExpire: Date | null;
+  resetPasswordToken: string;
   resetPasswordTokenExpire: Date;
   generateVerificationCodes: () => Promise<number>;
 }
