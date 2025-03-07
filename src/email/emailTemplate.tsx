@@ -1,5 +1,6 @@
 import {
   Body,
+  Button,
   Container,
   Head,
   Heading,
@@ -15,7 +16,7 @@ interface VerificationEmailProps {
   verificationCode: string;
 }
 
-export default function VerificationEmail({
+export function VerificationEmail({
   name,
   verificationCode,
 }: VerificationEmailProps) {
@@ -47,6 +48,45 @@ export default function VerificationEmail({
           </Container>
         </Body>
       </Tailwind>
+    </Html>
+  );
+}
+
+export function ResetPasswordEmail({
+  url,
+  name,
+}: {
+  url: string;
+  name: string;
+}) {
+  return (
+    <Html>
+      <Head />
+      <Body className="bg-gray-100 text-gray-900">
+        <Container className="bg-white p-6 rounded-lg shadow-lg max-w-md mx-auto">
+          <Heading className="text-xl font-semibold text-center">
+            Reset Your Password
+          </Heading>
+          <Text className="text-gray-600 text-center">
+            Hi {name},
+            <br />
+            You requested to reset your password. Click the button below to set
+            a new password.
+          </Text>
+          <div className="text-center mt-4">
+            <Button
+              href={url}
+              className="bg-blue-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-700"
+            >
+              Reset Password
+            </Button>
+          </div>
+          <Text className="text-gray-500 text-sm text-center mt-4">
+            If you didn’t request a password reset, you can safely ignore this
+            email.
+          </Text>
+        </Container>
+      </Body>
     </Html>
   );
 }

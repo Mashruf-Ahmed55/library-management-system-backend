@@ -1,6 +1,9 @@
 import nodemailer from 'nodemailer';
 import { config } from '../config/config';
-import { verificationEmail } from './emailTemplates';
+import {
+  sendResetPasswordEmailTemplates,
+  verificationEmail,
+} from './emailTemplates';
 
 const generateVerificationOtpEmailTemplate = (code: number, name: string) => {
   return verificationEmail(code, name);
@@ -24,6 +27,7 @@ const sendEmail = async (email: string, subject: string, message: string) => {
       subject: subject,
       html: message,
     });
+    console.log('Email sent: %s', info.messageId);
   } catch (error: any) {
     console.error('❌ Error sending email:', error.message);
     console.error('Error details:', error.response || error.stack);
@@ -44,5 +48,22 @@ export const sendVerificationCode = async (
     await sendEmail(email, 'Verification Code', message);
   } catch (error: any) {
     console.error('❌ Error in sending verification code:', error.message);
+  }
+};
+
+const generateResetPasswordEmailTemplate = (url: string, name: string) => {
+  return sendResetPasswordEmailTemplates(url, name);
+};
+
+export const sendResetPasswordEmail = async (
+  url: string,
+  email: string,
+  name: string
+) => {
+  try {
+    const message = await generateResetPasswordEmailTemplate(url, name);
+    await sendEmail(email, 'Reset Your Password', message);
+  } catch (error: any) {
+    console.error('❌ Error in sending reset password email:', error.message);
   }
 };

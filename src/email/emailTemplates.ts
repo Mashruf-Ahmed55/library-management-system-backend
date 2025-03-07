@@ -1,6 +1,6 @@
 import { render } from '@react-email/render';
 import * as React from 'react';
-import VerificationEmail from './verificationEmailTemplate';
+import { ResetPasswordEmail, VerificationEmail } from './emailTemplate';
 
 export const verificationEmail = (code: number, name: string) => {
   const emailContent = React.createElement(VerificationEmail, {
@@ -8,5 +8,13 @@ export const verificationEmail = (code: number, name: string) => {
     name: name,
   });
 
+  return render(emailContent);
+};
+
+export const sendResetPasswordEmailTemplates = (url: string, name: string) => {
+  const emailContent = React.createElement(ResetPasswordEmail, {
+    url: url,
+    name: name,
+  });
   return render(emailContent);
 };

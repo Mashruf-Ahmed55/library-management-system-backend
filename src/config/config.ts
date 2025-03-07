@@ -10,7 +10,8 @@ const _config = {
   NODEMAILER_USER: process.env.NODEMAILER_USER || '',
   NODEMAILER_PASS: process.env.NODEMAILER_PASS || '',
   NODEMAILER_SERVICE: process.env.NODEMAILER_SERVICE || '',
-  JWT_SECRET: process.env.JWT_SECRET
+  JWT_SECRET: process.env.JWT_SECRET,
+  RESET_PASSWORD_SECRET: process.env.RESET_PASSWORD_SECRET,
 };
 
 export const config = Object.freeze(_config);

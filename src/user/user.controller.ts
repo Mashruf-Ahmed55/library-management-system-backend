@@ -5,7 +5,10 @@ import createHttpError from 'http-errors';
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import { config } from '../config/config';
-import { sendVerificationCode } from '../email/emailConfig';
+import {
+  sendResetPasswordEmail,
+  sendVerificationCode,
+} from '../email/emailConfig';
 import userModel from './user.model';
 import { IUser } from './user.type';
 
@@ -228,3 +231,34 @@ export const getUser = expressAsyncHandler(
   }
 );
 
+export const forgotPassword = expressAsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { email } = req.body;
+
+    if (!email) {
+      return next(createHttpError(400, 'Email is required'));
+    }
+
+    try {
+      const user = await userModel.findOne({ email, accountVerified: true });
+
+      if (!user) {
+        return next(createHttpError(404, 'User not found'));
+      }
+
+      const resetPasswordToken = await user.generateResetPasswordToken();
+      await user.save({ validateModifiedOnly: false });
+      const resetPasswordUrl = `${config.FRONT_END_URL}/reset-password/${resetPasswordToken}`;
+      console.log(resetPasswordUrl);
+
+      await sendResetPasswordEmail(resetPasswordUrl, user.email, user.name);
+
+      res.status(200).json({
+        success: true,
+        message: `Reset password link sent to your email ${user.email}`,
+      });
+    } catch (error) {
+      return next(createHttpError(500, 'Internal server error'));
+    }
+  }
+);

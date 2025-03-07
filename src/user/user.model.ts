@@ -1,4 +1,6 @@
+import jwt from 'jsonwebtoken';
 import { model, Schema } from 'mongoose';
+import { config } from '../config/config';
 import { generateVerificationCode } from '../config/utils';
 import { IUser } from './user.type';
 
@@ -80,4 +82,18 @@ userSchema.methods.generateVerificationCodes = async function () {
   return verificationCode;
 };
 
+userSchema.methods.generateResetPasswordToken = async function () {
+  const resetPasswordToken = jwt.sign(
+    { _id: this._id },
+    config.RESET_PASSWORD_SECRET as string,
+    {
+      expiresIn: '15m',
+    }
+  );
+
+  this.resetPasswordToken = resetPasswordToken;
+  this.resetPasswordTokenExpire = new Date(Date.now() + 15 * 60 * 1000);
+  await this.save();
+  return resetPasswordToken;
+};
 export default model<IUser>('User', userSchema);

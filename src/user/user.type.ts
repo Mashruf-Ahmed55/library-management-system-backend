@@ -25,4 +25,5 @@ export interface IUser {
   resetPasswordToken: string;
   resetPasswordTokenExpire: Date;
   generateVerificationCodes: () => Promise<number>;
+  generateResetPasswordToken: () => Promise<string>;
 }
