@@ -22,8 +22,8 @@ export interface IUser {
   };
   verificationCode: number | null;
   verificationCodeExpire: Date | null;
-  resetPasswordToken: string;
-  resetPasswordTokenExpire: Date;
+  resetPasswordToken: string | null;
+  resetPasswordTokenExpire: Date | null;
   generateVerificationCodes: () => Promise<number>;
   generateResetPasswordToken: () => Promise<string>;
 }

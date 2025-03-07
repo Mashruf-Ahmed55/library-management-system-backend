@@ -1,4 +1,5 @@
 import bcryptjs from 'bcryptjs';
+import crypto from 'crypto';
 import { NextFunction, Request, Response } from 'express';
 import expressAsyncHandler from 'express-async-handler';
 import createHttpError from 'http-errors';
@@ -257,6 +258,81 @@ export const forgotPassword = expressAsyncHandler(
         success: true,
         message: `Reset password link sent to your email ${user.email}`,
       });
+    } catch (error) {
+      return next(createHttpError(500, 'Internal server error'));
+    }
+  }
+);
+
+export const resetPassword = expressAsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { token } = req.params;
+      const { password, confirmPassword } = req.body;
+
+      if (!password || !confirmPassword) {
+        return next(createHttpError(400, 'Both password fields are required.'));
+      }
+
+      if (password.length < 8 || password.length > 16) {
+        return next(
+          createHttpError(400, 'Password must be between 8 to 16 characters.')
+        );
+      }
+
+      if (password !== confirmPassword) {
+        return next(createHttpError(400, 'Passwords do not match.'));
+      }
+
+      // Hash the token before searching in DB
+      const hashedToken = crypto
+        .createHash('sha256')
+        .update(token)
+        .digest('hex');
+
+      // Find user with valid reset token
+      const user = await userModel.findOne({
+        resetPasswordToken: hashedToken,
+        resetPasswordTokenExpire: { $gt: Date.now() },
+      });
+
+      if (!user) {
+        return next(createHttpError(400, 'Invalid or expired token.'));
+      }
+
+      // Hash password & reset token
+      user.password = await bcryptjs.hash(password, 10);
+      user.resetPasswordToken = null;
+      user.resetPasswordTokenExpire = null;
+      await user.save();
+
+      // Generate new JWT token for user login
+      const jwtToken = jwt.sign(
+        { _id: user._id },
+        config.JWT_SECRET as string,
+        {
+          expiresIn: '7d',
+        }
+      );
+
+      // Send response with JWT token
+      res
+        .status(200)
+        .cookie('jwt', jwtToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production', // Secure=true only in production
+          maxAge: 7 * 24 * 60 * 60 * 1000,
+        })
+        .json({
+          message: 'Password reset successful! You are now logged in.',
+          user: {
+            id: user._id,
+            name: user.name,
+            email: user.email,
+          },
+          success: true,
+          token: jwtToken,
+        });
     } catch (error) {
       return next(createHttpError(500, 'Internal server error'));
     }
