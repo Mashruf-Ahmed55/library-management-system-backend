@@ -1,6 +1,6 @@
-import {model, Schema} from 'mongoose';
-import {generateVerificationCode} from '../config/utils';
-import {IUser} from './user.type';
+import { model, Schema } from 'mongoose';
+import { generateVerificationCode } from '../config/utils';
+import { IUser } from './user.type';
 
 const userSchema = new Schema<IUser>(
   {
@@ -72,10 +72,11 @@ const userSchema = new Schema<IUser>(
 
 // ✅ Updated method to be async and save changes to DB
 userSchema.methods.generateVerificationCodes = async function () {
-  const verificationCode = generateVerificationCode().toString(); // Convert to String
+  const verificationCode = generateVerificationCode().toString();
+
   this.verificationCode = verificationCode;
-  this.verificationCodeExpire = new Date(Date.now() + 15 * 60 * 1000);
-  await this.save(); // 🔥 Save changes to DB
+  this.verificationCodeExpire = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+  await this.save(); //
   return verificationCode;
 };
 
