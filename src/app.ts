@@ -2,6 +2,7 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
 import morgan from 'morgan';
+import bookRouter from './book/book.route';
 import { config } from './config/config';
 import globalError from './middlewares/globalError';
 import userRouter from './user/user.route';
@@ -21,6 +22,7 @@ app.use(morgan('dev'));
 
 // Route Configuration
 app.use('/api/v1/auth', userRouter);
+app.use('/api/v1/book', bookRouter);
 
 // Global Error Handler
 app.use(globalError);

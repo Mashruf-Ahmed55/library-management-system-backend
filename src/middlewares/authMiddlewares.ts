@@ -38,3 +38,14 @@ export const isAuthenticed = expressAsyncHandler(
     }
   }
 );
+
+export const isAuthorized = (...roles: any) => {
+  return (req: AuthRequest, res: Response, next: NextFunction) => {
+    if (!roles.includes(req.user?.role)) {
+      return next(
+        createHttpError(400, 'Sorry! Only can admin access this route ')
+      );
+    }
+    next();
+  };
+};
