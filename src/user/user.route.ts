@@ -7,6 +7,7 @@ import {
   logout,
   register,
   resetPassword,
+  updatePassword,
   verifyOtp,
 } from './user.controller';
 
@@ -19,5 +20,8 @@ userRouter.route('/logout').get(isAuthenticed, logout);
 userRouter.route('/profile').get(isAuthenticed, getUser);
 userRouter.route('/password/forgot-password').post(forgotPassword);
 userRouter.route('/password/reset-password/:token').put(resetPassword);
+userRouter
+  .route('/password/update-password')
+  .put(isAuthenticed, updatePassword);
 
 export default userRouter;

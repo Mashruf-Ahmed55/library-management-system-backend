@@ -81,6 +81,7 @@ export function ResetPasswordEmail({
               Reset Password
             </Button>
           </div>
+          <Text className="text-gray-500 text-sm text-center mt-4">{url}</Text>
           <Text className="text-gray-500 text-sm text-center mt-4">
             If you didn’t request a password reset, you can safely ignore this
             email.

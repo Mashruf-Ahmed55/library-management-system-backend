@@ -338,3 +338,57 @@ export const resetPassword = expressAsyncHandler(
     }
   }
 );
+
+export const updatePassword = expressAsyncHandler(
+  async (req: AuthRequest, res: Response, next: NextFunction) => {
+    try {
+      const { currentPassword, newPassword, confirmNewPassword } = req.body;
+
+      // Check if all fields are provided
+      if (!currentPassword || !newPassword || !confirmNewPassword) {
+        return next(createHttpError(400, 'All fields are required'));
+      }
+
+      // Find user with password field
+      const user = await userModel.findById(req.user?._id).select('+password');
+
+      // If user not found
+      if (!user) {
+        return next(createHttpError(404, 'User not found'));
+      }
+
+      // Check if current password matches
+      const isPasswordMatch = await bcryptjs.compare(
+        currentPassword,
+        user.password
+      );
+
+      if (!isPasswordMatch) {
+        return next(createHttpError(400, 'Current Password is Incorrect'));
+      }
+
+      // Validate new password length
+      if (newPassword.length < 8 || newPassword.length > 16) {
+        return next(
+          createHttpError(400, 'Password must be between 8 to 16 characters.')
+        );
+      }
+
+      // Check if new password and confirm password match
+      if (newPassword !== confirmNewPassword) {
+        return next(createHttpError(400, 'Passwords do not match.'));
+      }
+
+      // Hash and save new password
+      user.password = await bcryptjs.hash(newPassword, 10);
+      await user.save();
+
+      res.status(200).json({
+        success: true,
+        message: 'Password updated successfully',
+      });
+    } catch (error) {
+      return next(createHttpError(500, 'Internal Server Error'));
+    }
+  }
+);
